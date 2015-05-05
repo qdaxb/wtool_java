@@ -1,0 +1,31 @@
+#!/bin/bash
+### grep text in jars
+
+if [ $# -lt 2 ];then
+    echo 'Usage : wtool jargrep text <path or filename>'
+    exit 1;
+fi
+
+LOOK_FOR=$1
+LOOK_FOR=`echo ${LOOK_FOR//\./\/}`
+while true; do
+    folder=$2
+    if [ "$folder" = "" ];then
+	break;
+    fi
+    echo "finding '$LOOK_FOR' in $folder ..."
+    if [ -d "$folder" ]; then
+	for i in `find $2 -name "*jar"`
+	do
+	    unzip -p $i | grep "$LOOK_FOR" > /dev/null
+	    if [ $? = 0   ]
+	    then
+		echo "==> Found \"$LOOK_FOR\" in $i"
+	    fi
+	done
+    fi
+    if [ -f "$folder" ]; then
+	zipgrep "$LOOK_FOR" "$folder"
+    fi
+    shift;
+done;

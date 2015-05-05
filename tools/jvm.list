@@ -1,0 +1,18 @@
+a;echo -n "Thread count:"&&jstack pid |grep prio= |grep tid= |grep nid=|wc -l;打印线程数;0;;
+c;jstack pid |grep 'java.lang.Thread.State:'|sort|uniq -c;打印线程运行状态统计;0;;
+d;jstat -gcutil pid [arg];垃圾收集统计。;0,3;可以指定间隔时间及执行次数，默认10秒;1000 10
+k;jmap -histo pid |sort -n -r -k$(([arg]+1)) |head -n 21;打印jvm heap中top20的对象。*会使程序暂停响应*;0;参数：1:按实例数量排序,2:按内存占用排序，默认为1;1
+q;jmap -histo:live pid [arg] |sort -n -r -k$(([arg]+1)) |head -n 21;触发full gc后打印jvm heap中top20的对象。*会使程序暂停响应*;0;参数：1:按实例数量排序,2:按内存占用排序，默认为1;1
+f;jstat -gccapacity pid [arg];显示堆中各代的空间;0,3;1000 10
+g;jmap -finalizerinfo pid [arg];打印finalzer队列情况;0;
+e;jmap -histo:live pid [arg] >/dev/null;触发full gc。*会使程序暂停响应*;0;
+b;jstack pid;打印所有线程;0;;
+h;jstat -gccause pid [arg];垃圾收集统计（包含原因）;0,3;可以指定间隔时间及执行次数，默认10秒;1000 10
+j;jstat -class pid [arg];显示classloader统计;0,3;
+i;jstat -compiler pid [arg];显示jit编译统计;0,3;
+k;jmap -heap pid [arg];打印jvm heap统计*会使程序暂停响应*;0;
+l;jstat -gcpermcapacity pid [arg];打印perm区内存情况*会使程序暂停响应*;0;
+p;jmap -permstat pid [arg];输出所有类装载器在perm里产生的对象。;0;可以指定间隔时间及执行次数
+m;jmap -dump:file=[arg] pid;dump heap到文件*会使程序暂停响应*;0; 默认保存到`pwd`/dump.bin,可指定其它路径;`pwd`/dump.bin
+n;jstack -m pid ;死锁检测;0;;
+o;sleep [arg];等待X秒，默认为1;1,1;;1

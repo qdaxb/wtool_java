@@ -1,0 +1,101 @@
+#!/bin/bash
+### start jvm debugger
+
+if [ $# -lt 1 ];then
+    echo "Usage : wtool jvm <pid or path expr>";
+    exit 1;
+fi
+p(){
+    if [ "$output_flag" = "1" ];then
+	echo "$@"
+    elif [ "$output_flag" = "2" ];then
+	echo "$@" >>${pid}_jvm.log
+    else
+	echo "$@" |tee -a ${pid}_jvm.log
+    fi
+}
+
+doMain(){
+    while(true) ;do
+	i=1
+	while read line ;do
+	    OLD_IFS="$IFS"
+	    IFS=";"
+	    defs=($line)
+	    IFS="$OLD_IFS"
+	    eval marker${i}=\'${defs[0]}\'
+	    eval cmd_def${i}=\'${defs[1]}\'
+	    eval desp_def${i}=\'${defs[2]}\'
+	    eval arg_def${i}=\'${defs[3]}\' 
+	    eval arg_desp${i}=\'${defs[4]}\' 
+	    eval def_arg${i}=\'${defs[5]}\' 
+	    echo $i" : "$(eval echo \$desp_def${i})$(eval echo \$arg_desp${i})
+	    ((i++))
+	done <$base_dir/jvm.list
+	echo "q : exit"
+	echo -n "Enter command queue:"
+	read input < /dev/tty
+	if [ "$input" = "q" ];then exit 0;fi
+	if [ "$input" = "" ];then continue;fi
+	OLD_IFS=”$IFS”
+	IFS=”\;”
+	choices=($input)
+	IFS=”$OLD_IFS”
+	if [ "$input" = "q" ];then exit 0;fi
+	cmd_queue=$input
+	echo "which output type?"
+	echo "default : console and log file(${1}_jvm.log)"
+	echo "a       : console only"
+	echo "b       : file only"
+	echo -n "Enter output type:"
+	read input < /dev/tty
+	if [ "$input" = "a" ];then
+	    output_flag="1"
+	elif [ "$input" = "b" ];then
+	    output_flag="2"
+	else
+	    output_flag=""
+	fi
+	p "======================================================="
+	p "*** [`date "+%Y-%m-%d %H:%M:%S"`] start execute queue : $cmd_queue ***"
+	for choice in ${choices[@]}; do
+	    OLD_IFS=”$IFS”
+	    IFS=”:”
+	    cmd=($choice)
+	    IFS=”$OLD_IFS”
+	    actul_cmd=$(eval echo \$cmd_def${cmd[0]})
+	    actul_cmd=${actul_cmd//pid/$1}
+	    arg=${cmd[1]}
+	    if [ "$arg" = "" ];then
+		arg="$(eval echo \$def_arg${cmd[0]})"
+	    fi
+	    arg=${arg//,/ }
+	    actul_cmd=${actul_cmd//\[arg\]/$arg}
+	    mark=$(eval echo \$marker${cmd[0]})
+	    help_msg=`cat $base_dir/jvm.dsc |grep -e "^$mark:"|cut -c 3-`
+	    p "-------------------------------------------------------"
+	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] start execute command:$actul_cmd ***"
+	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] $(eval echo \$desp_def${cmd[0]}) ***"
+	    if [ ! "$help_msg" = "" ];then
+		help_msg=`echo "$help_msg"|awk '{print "# "$0}'`
+		p "# Help message:"
+		p -e "$help_msg"
+		p ""
+	    fi
+	    if [ "$output_flag" = "1" ];then
+		bash -c "$actul_cmd"
+	    elif [ "$output_flag" = "2" ];then
+		bash -c "$actul_cmd" > ${pid}_jvm.log
+	    else
+		bash -c "$actul_cmd" |tee -a ${pid}_jvm.log
+	    fi
+	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] finish execute command:$actul_cmd ***"
+	done
+	p "*** [`date "+%Y-%m-%d %H:%M:%S"`] finish execute queue ***"
+	p "======================================================="
+    done 
+}
+
+pid=$1
+base_dir=$(dirname "$(echo "$0" | sed -e '')")
+doMain "$@"

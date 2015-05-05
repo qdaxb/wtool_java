@@ -1,0 +1,22 @@
+#!/bin/bash
+### start housemd debugger
+
+base_dir=$(dirname "$(echo "$0" | sed -e '')")
+if [ $# -eq 0 ];then
+    echo "Usage : wtool housemd pid [java_home]"
+    echo "More details about housemd please read doc: $base_dir/housemd.lib/README.md"
+    echo "Site: https://github.com/CSUG/HouseMD/wiki/UserGuideCN"
+    exit 1;
+fi
+if [ ! "$JAVA_HOME" = "" ] ;then
+   java_home=$JAVA_HOME 
+fi
+if [ $# -gt 1 ];then
+    java_home=$2;
+fi
+if [ ! -f "$java_home/lib/tools.jar" ] && [ "$(uname)" != "Darwin"  ];then
+    echo "$java_home/lib/tools.jar not found!"
+    exit 1;
+fi
+
+java -Xbootclasspath/a:$java_home/lib/tools.jar -jar $base_dir/housemd.lib/housemd_2.9.2-0.2.6.min.jar $1
