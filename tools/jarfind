@@ -6,12 +6,27 @@ if [ $# -lt 2 ];then
     exit 1;
 fi
 
+findinjar(){
+	result=`unzip -l "$1"|grep "$2"`
+	if [ $? = 0 ];then
+	    echo "$1 :"
+	    echo "$result"
+	fi
+}
 keyword=$1;
-locate=$2;
-echo "find $keyword in $locate"
-for filename in `find $locate -name '*.jar'`; do
-    result=`unzip -l "$filename"|grep "$keyword"`
-    if [ $? = 0 ];then
-	echo "$filename : $result"
+while true; do
+    folder=$2
+    if [ "$folder" = "" ];then
+	break;
     fi
+    if [ -d "$folder" ]; then
+	echo "find $keyword in $locate"
+	for filename in `find $folder -name '*.jar'`; do
+	    findinjar "$folder" "$keyword"
+	done
+    fi
+    if [ -f "$folder" ]; then
+	findinjar "$folder" "$keyword"
+    fi
+    shift;
 done
