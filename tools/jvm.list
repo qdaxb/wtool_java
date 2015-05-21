@@ -2,7 +2,7 @@ a;echo -n "Thread count:"&&jstack pid |grep prio= |grep tid= |grep nid=|wc -l;�
 c;jstack pid |grep 'java.lang.Thread.State:'|sort|uniq -c;打印线程运行状态统计;0;;
 d;jstat -gcutil pid [arg];垃圾收集统计。;0,3;可以指定间隔时间及执行次数，默认10秒;1000 10
 k;jmap -histo pid |sort -n -r -k$(([arg]+1)) |head -n 21;打印jvm heap中top20的对象。*会使程序暂停响应*;0;参数：1:按实例数量排序,2:按内存占用排序，默认为1;1
-q;jmap -histo:live pid [arg] |sort -n -r -k$(([arg]+1)) |head -n 21;触发full gc后打印jvm heap中top20的对象。*会使程序暂停响应*;0;参数：1:按实例数量排序,2:按内存占用排序，默认为1;1
+q;jmap -histo:live pid |sort -n -r -k$(([arg]+1)) |head -n 21;触发full gc后打印jvm heap中top20的对象。*会使程序暂停响应*;0;参数：1:按实例数量排序,2:按内存占用排序，默认为1;1
 f;jstat -gccapacity pid [arg];显示堆中各代的空间;0,3;1000 10
 g;jmap -finalizerinfo pid [arg];打印finalzer队列情况;0;
 e;jmap -histo:live pid [arg] >/dev/null;触发full gc。*会使程序暂停响应*;0;
