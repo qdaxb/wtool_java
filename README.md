@@ -55,7 +55,9 @@
 15 : 输出所有类装载器在perm里产生的对象。可以指定间隔时间及执行次数
 16 : dump heap到文件*会使程序暂停响应*默认保存到/root/dump.bin,可指定其它路径
 17 : 死锁检测
-18 : 等待X秒，默认为1
+18 : 查看directbuffer情况
+19 : 查看占用cpu最高的线程情况
+20 : 等待X秒，默认为1
 q : exit
 Enter command queue:
 
