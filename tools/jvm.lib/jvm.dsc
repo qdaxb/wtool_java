@@ -91,3 +91,10 @@ q:J代表long
 q:Z代表boolean
 q:前边有[代表数组
 q:对象用[L+类名表示
+
+r:应用程序的directbuffer使用情况（单位为byte）
+r:direct代表ByteBuffer.allocateDirect分配的nio directbuffer
+r:mapped代表FileChannel.map分配的mapped memory
+
+s:查看占用cpu最高的线程情况
+s:使用了开源项目jtop，项目地址：https://bitbucket.org/hatterjiang/jtop，作者：hatterjiang

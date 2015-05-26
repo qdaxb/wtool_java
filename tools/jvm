@@ -72,7 +72,7 @@ doMain(){
 	    arg=${arg//,/ }
 	    actul_cmd=${actul_cmd//\[arg\]/$arg}
 	    mark=$(eval echo \$marker${cmd[0]})
-	    help_msg=`cat $base_dir/jvm.lib/jvm.dsc |grep -e "^$mark:"|cut -c 3-`
+	    help_msg=`cat ${base_dir}/jvm.lib/jvm.dsc |grep -e "^${mark}:"|cut -c 3-`
 	    p "-------------------------------------------------------"
 	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] start execute command:$actul_cmd ***"
 	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] $(eval echo \$desp_def${cmd[0]}) ***"
@@ -83,11 +83,11 @@ doMain(){
 		p ""
 	    fi
 	    if [ "$output_flag" = "1" ];then
-		bash -c "$actul_cmd"
+		bash -c WTOOL_JVM_LIB="${base_dir}/jvm.lib" "$actul_cmd"
 	    elif [ "$output_flag" = "2" ];then
-		bash -c "$actul_cmd" > ${pid}_jvm.log
+		bash -c WTOOL_JVM_LIB="${base_dir}/jvm.lib" "$actul_cmd" > ${pid}_jvm.log
 	    else
-		bash -c "$actul_cmd" |tee -a ${pid}_jvm.log
+		bash -c "export WTOOL_JVM_LIB=${base_dir}/jvm.lib; $actul_cmd" |tee -a ${pid}_jvm.log
 	    fi
 	    p "*** [`date "+%Y-%m-%d %H:%M:%S"`] finish execute command:$actul_cmd ***"
 	done
