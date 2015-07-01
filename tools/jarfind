@@ -20,12 +20,11 @@ while true; do
 	break;
     fi
     if [ -d "$folder" ]; then
-	echo "find $keyword in $locate"
+	echo "begin searching file $keyword in $folder"
 	for filename in `find $folder -name '*.jar'`; do
-	    findinjar "$folder" "$keyword"
+	    findinjar "$filename" "$keyword"
 	done
-    fi
-    if [ -f "$folder" ]; then
+    elif [ -f "$folder" ]; then
 	findinjar "$folder" "$keyword"
     fi
     shift;
