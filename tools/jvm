@@ -19,6 +19,13 @@ doMain(){
     while(true) ;do
 	i=1
 	while read line ;do
+	    if [[ "$line" == "="* ]];then
+		echo "$line"
+		continue;
+	    elif [[ "$line" == "#"* ]];then
+		echo "$line"
+		continue;
+	    fi
 	    OLD_IFS="$IFS"
 	    IFS=";"
 	    defs=($line)
