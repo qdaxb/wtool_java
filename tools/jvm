@@ -90,9 +90,9 @@ doMain(){
 		p ""
 	    fi
 	    if [ "$output_flag" = "1" ];then
-		bash -c WTOOL_JVM_LIB="${base_dir}/jvm.lib" "$actul_cmd"
+		bash -c "export WTOOL_JVM_LIB=${base_dir}/jvm.lib; $actul_cmd" 2>&1
 	    elif [ "$output_flag" = "2" ];then
-		bash -c WTOOL_JVM_LIB="${base_dir}/jvm.lib" "$actul_cmd" > ${pid}_jvm.log
+		bash -c "export WTOOL_JVM_LIB=${base_dir}/jvm.lib; $actul_cmd" > ${pid}_jvm.log 2>&1
 	    else
 		bash -c "export WTOOL_JVM_LIB=${base_dir}/jvm.lib; $actul_cmd" |tee -a ${pid}_jvm.log
 	    fi
